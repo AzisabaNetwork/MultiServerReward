@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.github.aburaagetarou.command.MSRCommand;
-import com.github.aburaagetarou.command.Takuya;
 import com.github.aburaagetarou.config.ConfigManager;
 import com.github.aburaagetarou.config.MSRConfig;
 import com.github.aburaagetarou.listener.PlayerListener;
@@ -66,9 +65,6 @@ public class MultiServerReward extends JavaPlugin
             sender.sendMessage(MessageType.ERROR, MessageKeys.ERROR_GENERIC_LOGGED);
             return true;
         }));
-
-        // 後で消す
-        manager.registerCommand(new Takuya());
 
         // 連携先サーバーの場合、報酬データの自動保存を開始
         if(!MSRConfig.isOriginal()) {
