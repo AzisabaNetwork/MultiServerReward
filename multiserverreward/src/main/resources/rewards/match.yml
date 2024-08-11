@@ -1,0 +1,20 @@
+### 試合報酬設定 ###
+
+# !!!!! 注意 !!!!!
+# plugins内の設定ファイルは使用されません。
+# config.yml内の連携用ファイルの保存先ディレクトリに設定ファイルを保存してください。
+
+# 参加賞(勝敗関係なし)
+match-end:
+  commands:
+    - "minecraft:give <player> minecraft:emerald 1"
+
+# 試合勝利
+match-win:
+  commands:
+    - "minecraft:give <player> minecraft:end_crystal 1"
+
+# 試合敗北
+match-lose:
+  commands: []
+

@@ -1,0 +1,113 @@
+### キルストリーク報酬設定 ###
+
+# !!!!! 注意 !!!!!
+# plugins内の設定ファイルは使用されません。
+# config.yml内の連携用ファイルの保存先ディレクトリに設定ファイルを保存してください。
+
+# 固定キルストリーク数報酬
+kill-streak:
+  3:
+    messages:
+      - "&r<player> &7が 3人 &7連続キル！"
+    commands: []
+  5:
+    messages:
+      - "&r<player> &7が 5人 &7連続キル！"
+    commands: []
+  10:
+    messages:
+      - "&r<player> &7が &210人 &7連続キル！"
+    commands: []
+  15:
+    messages:
+      - "&r<player> &7が &215人 &7連続キル！"
+    commands: []
+  20:
+    messages:
+      - "&r<player> &7が &e20人 &7連続キル！"
+    commands: []
+  25:
+    messages:
+      - "&r<player> &7が &e25人 &7連続キル！"
+    commands: []
+  30:
+    messages:
+      - "&r<player> &7が &b30人 &7連続キル！"
+    commands: []
+  35:
+    messages:
+      - "&r<player> &7が &b35人 &7連続キル！"
+    commands: []
+  40:
+    messages:
+      - "&r<player> &7が &c40人 &7連続キル！"
+    commands: []
+  45:
+    messages:
+      - "&r<player> &7が &c45人 &7連続キル！"
+    commands: []
+  50:
+    messages:
+      - "&r&7なんてこったい！ &r<player>&7 が &c50人 &7連続キル！ カンスト！"
+    commands: []
+
+
+# キルストリーク倍数
+kill-streak-level:
+  1:
+    messages: []
+    commands:
+      - "minecraft:give <player> minecraft:emerald 2"
+      - "essentials:eco give <player> 2"
+      - "crackshotplus:csp update inventory <player>"
+  5:
+    messages: []
+    commands:
+      - "minecraft:give <player> minecraft:diamond 1"
+      - "crackshot:shot give <player> storobo2"
+      - "crackshot:shot give <player> KSTICKET"
+      - "essentials:eco give <player> 5"
+      - "crackshot:shot give <player> 5ks"
+      - "crackshotplus:csp update inventory <player>"
+  10:
+    messages: []
+    commands:
+      - "minecraft:give <player> minecraft:diamond 1"
+      - "crackshot:shot give <player> uav"
+      - "crackshotplus:csp update inventory <player>"
+  15:
+    messages: []
+    commands:
+      - "minecraft:give <player> minecraft:diamond 1"
+      - "crackshot:shot give <player> deathmachine"
+      - "crackshotplus:csp update inventory <player>"
+  20:
+    messages: []
+    commands:
+      - "minecraft:give <player> minecraft:diamond 1"
+      - "crackshot:shot give <player> storobo"
+      - "crackshotplus:csp update inventory <player>"
+  50:
+    messages: []
+    commands:
+      - "minecraft:give <player> minecraft:diamond 64"
+      - "crackshot:shot give <player> kansuto"
+      - "crackshotplus:csp update inventory <player>"
+
+
+# 期間限定報酬
+limited-time-streak:
+  # 期間限定報酬の設定は以下のように記述します。
+  # (event name): 他と被らない好きな名前
+  #   start: 期間の開始日時
+  #   end: 期間の終了日時
+  #   kill-streak: キルストリーク報酬の設定(通常報酬と設定方法同じ)
+  #   kill-streak-level: キルストリーク倍数報酬の設定(通常倍数と設定方法同じ)
+  summer-2024:
+    start: "2024-08-10 00:00:00"
+    end: "2024-08-25 23:59:59"
+    kill-streak:
+      50:
+        messages: []
+        commands:
+          - "crackshot:shot give <player> summer2024kansuto"

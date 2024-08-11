@@ -1,0 +1,43 @@
+package com.github.aburaagetarou.reward.config.type;
+
+import java.util.HashMap;
+
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+/**
+ * アイテム報酬を表すクラス
+ * @author AburaAgeTarou
+ */
+public class RewardItem implements IReward {
+    
+    // 報酬アイテム
+    private ItemStack item;
+    
+    /**
+     * コンストラクタ
+     * @param item 報酬アイテム
+     */
+    public RewardItem(ItemStack item) {
+        this.item = item;
+    }
+    
+    /**
+     * 報酬を付与する
+     * @param player 報酬を受け取るプレイヤー
+     * @return 付与できなかったアイテム
+     */
+    @Override
+    public ItemStack give(Player player) {
+        
+        // 受け取れる分だけアイテムを付与
+        HashMap<Integer, ItemStack> droppedItem = player.getInventory().addItem(item);
+        
+        // インベントリに収まりきらなかったアイテムを返す
+        if(!droppedItem.isEmpty()) {
+            return droppedItem.get(0);
+        }
+
+        return null;
+    }
+}
