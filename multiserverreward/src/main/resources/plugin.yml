@@ -1,6 +1,6 @@
 main: com.github.aburaagetarou.MultiServerReward
 name: MultiServerReward
-version: "1.0.1"
+version: "1.0.2"
 api: 1.16.5
 api-version: 1.16
 depend: ["LeonGunWar"]
