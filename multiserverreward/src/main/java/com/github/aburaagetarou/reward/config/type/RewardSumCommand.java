@@ -6,34 +6,39 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.github.aburaagetarou.MultiServerReward;
-import com.github.aburaagetarou.config.MSRConfig;
+import com.github.aburaagetarou.config.StoredCommandConfig;
 import com.github.aburaagetarou.reward.config.RewardType;
+import com.github.aburaagetarou.util.PlaceHolderUtils;
 
 /**
- * ＄報酬を表すクラス
+ * コマンド実行による累計報酬を表すクラス
  * @author AburaAgeTarou
  */
-public class RewardBalance implements IReward, ISummable {
+public class RewardSumCommand implements IReward, ISummable {
+
+    // 実行するコマンドのキー名
+    private final String commandKey;
     
-    // 報酬金額
-    private int balance;
+    // 報酬付与数
+    private double amount;
 
     // 四捨五入する小数桁
-    private static final int DECIMAL_PLACES = 0;
+    private static final int DECIMAL_PLACES = 2;
 
     /**
      * コンストラクタ
-     * @param balance 報酬金額
+     * @param commandKey 実行するコマンドのキー名：数量
      */
-    public RewardBalance(Double balance) {
-        BigDecimal bd = new BigDecimal(balance);
-        bd = bd.setScale(0, BigDecimal.ROUND_HALF_UP);
-        this.balance = bd.intValue();
+    public RewardSumCommand(String key) {
+        String split[] = key.split(":", 2);
+        if(split.length != 2) {
+            this.commandKey = key;
+            this.amount = 1.0d;
+        } else {
+            this.commandKey = split[0];
+            this.amount = Double.parseDouble(split[1]);
+        }
     }
-    public RewardBalance(String balance) {
-        this(new BigDecimal(balance).doubleValue());
-    }
-
 
     /**
      * 報酬リストの親キーを取得する
@@ -41,7 +46,7 @@ public class RewardBalance implements IReward, ISummable {
      */
     @Override
     public String getParentKey() {
-        return RewardType.BALANCE.getAlias();
+        return RewardType.SUM_COMMAND.getAlias();
     }
 
     /**
@@ -51,19 +56,17 @@ public class RewardBalance implements IReward, ISummable {
      */
     @Override
     public ISummable add(double amount) {
-        BigDecimal bd = new BigDecimal(amount);
-        bd = bd.setScale(0, BigDecimal.ROUND_HALF_UP);
-        this.balance += bd.intValue();
+        this.amount += amount;
         return this;
     }
 
     /**
-     * 数量を取得する
-     * @return 数量
+     * 報酬付与数を取得する
+     * @return 報酬付与数
      */
     @Override
     public double getAmount() {
-        return (double)balance;
+        return amount;
     }
 
     /**
@@ -72,9 +75,9 @@ public class RewardBalance implements IReward, ISummable {
      */
     @Override
     public Object serialize() {
-        BigDecimal bd = new BigDecimal(balance);
+        BigDecimal bd = new BigDecimal(amount);
         bd = bd.setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP);
-        return bd.doubleValue();
+        return commandKey + ":" + bd.stripTrailingZeros().toString();
     }
 
     /**
@@ -92,23 +95,17 @@ public class RewardBalance implements IReward, ISummable {
      */
     @Override
     public void give(Player player) {
-        
+
+        // コマンドを取得
+        String command = StoredCommandConfig.getCommand(commandKey);
+        if(command == null) return;
+
         // メインスレッドでコマンド実行
         Bukkit.getScheduler().runTask(MultiServerReward.getInstance(), () -> {
-            String command = MSRConfig.getBalanceRewardCommand();
-            command = command.replace("<player>", player.getName());
-            command = command.replace("<amount>", String.valueOf(balance));
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PlaceHolderUtils.replace(command, player, amount));
         });
-        return;
-    }
 
-    /**
-     * 報酬コマンドを取得する
-     * @return 報酬コマンド
-     */
-    public long getBalance() {
-        return balance;
+        return;
     }
 
     /**
@@ -117,6 +114,6 @@ public class RewardBalance implements IReward, ISummable {
      */
     @Override
     public String toString() {
-        return "$" + balance;
-    }
+        return commandKey;
+    }    
 }

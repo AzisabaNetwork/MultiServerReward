@@ -4,6 +4,7 @@ import com.github.aburaagetarou.reward.config.type.IReward;
 import com.github.aburaagetarou.reward.config.type.RewardBalance;
 import com.github.aburaagetarou.reward.config.type.RewardCommand;
 import com.github.aburaagetarou.reward.config.type.RewardMessage;
+import com.github.aburaagetarou.reward.config.type.RewardSumCommand;
 
 /**
  * 報酬の種類を表す列挙型
@@ -14,7 +15,8 @@ public enum RewardType {
     MESSAGE("messages", RewardMessage.class, String.class),
     //ITEM("item", RewardItem.class),
     COMMAND("commands", RewardCommand.class, String.class),
-    BALANCE("balance", RewardBalance.class, Double.class);
+    BALANCE("balance", RewardBalance.class, Double.class),
+    SUM_COMMAND("sum_commands", RewardSumCommand.class, String.class);
 
     // コンフィグでのエイリアス
     private final String alias;

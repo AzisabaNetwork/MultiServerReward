@@ -75,6 +75,7 @@ public class ConfigManager {
 
         // コンフィグの読み込み
         MSRConfig.loadConfig();
+        StoredCommandConfig.loadConfig();
 
         // 報酬情報の読み込み
         KillStreakReward.loadAll();

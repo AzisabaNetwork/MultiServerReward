@@ -8,7 +8,7 @@ import com.github.aburaagetarou.util.MessageUtils;
  * ※この報酬はファイルに保存しない
  * @author AburaAgeTarou
  */
-public class RewardMessage extends SingleRewardBase {
+public class RewardMessage implements IReward {
     
     // 報酬メッセージ
     private final String message;
@@ -31,11 +31,11 @@ public class RewardMessage extends SingleRewardBase {
     }
 
     /**
-     * 報酬を文字列化する
-     * @return null
+     * Yamlに書き込みを行うオブジェクトを返す
+     * @return オブジェクト
      */
     @Override
-    public String serialize() {
+    public Object serialize() {
         return null;
     }
 
@@ -44,7 +44,7 @@ public class RewardMessage extends SingleRewardBase {
      * @param player 報酬を受け取るプレイヤー
      */
     @Override
-    public void add(Player player) {
+    public void get(Player player) {
 
         // メッセージがない場合は何もしない
         if(message == null || message.length() == 0) {

@@ -1,0 +1,12 @@
+### コマンド定義設定 ###
+
+# 設定方法：
+# key: コマンド
+# ※keyは被らなければなんでもいい
+# ※コマンド内の以下の文字は置換されます
+#  - <player>: プレイヤー名
+#  - <amount>: 数量合計
+#
+# 設定例：
+# sample: "minecraft:give <player> minecraft:emerald <amount>"
+

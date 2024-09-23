@@ -129,7 +129,7 @@ public abstract class RewardManager {
      * @param reward 報酬
      */
     public void addRewards(Collection<? extends IReward> rewards) {
-        rewards.forEach(reward -> reward.add(player));
+        rewards.forEach(reward -> reward.get(player));
         unsavedRewards.addAll(rewards);
     }
 

@@ -2,7 +2,6 @@ package com.github.aburaagetarou.reward.manage;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,8 +16,7 @@ import com.github.aburaagetarou.MultiServerReward;
 import com.github.aburaagetarou.config.MSRConfig;
 import com.github.aburaagetarou.reward.config.RewardType;
 import com.github.aburaagetarou.reward.config.type.IReward;
-import com.github.aburaagetarou.reward.config.type.SingleRewardBase;
-import com.github.aburaagetarou.reward.config.type.SumRewardBase;
+import com.github.aburaagetarou.reward.config.type.ISummable;
 
 /**
  * ファイルによる報酬管理クラス
@@ -127,34 +125,38 @@ public class FileRewardManager extends RewardManager {
         }
 
         // 報酬情報をタイプ別に取得
-        Map<String, List<String>> rewards = new HashMap<>();
-        Map<String, BigDecimal> sumRewards = new HashMap<>();
+        Map<String, List<Object>> rewards = new HashMap<>();
+        Map<String, Map<Class<? extends IReward>, IReward>> sumRewards = new HashMap<>();
         for(IReward reward : unsavedRewards) {
             String parentKey = reward.getParentKey();
 
-            // 単一報酬の場合
-            if(reward instanceof SingleRewardBase) {
-                if(!rewards.containsKey(parentKey)) {
-                    rewards.put(parentKey, yml.getStringList(parentKey));
+            // 合計報酬の場合
+            if(reward instanceof ISummable) {
+                if(!sumRewards.containsKey(parentKey)) {
+                    Map<Class<? extends IReward>, IReward> map = new HashMap<>();
+                    map.put(RewardType.fromAlias(parentKey).getRewardClass(), reward);
+                    sumRewards.put(parentKey, map);
                 }
-                rewards.get(parentKey).add(((SingleRewardBase)reward).serialize());            
+                Map<Class<? extends IReward>, IReward> map = sumRewards.get(parentKey);
+                IReward sum = map.get(RewardType.fromAlias(parentKey).getRewardClass());
+                sumRewards.put(parentKey, map);
+                continue;
             }
 
-            // 合計報酬の場合
-            if(reward instanceof SumRewardBase) {
-                if(!sumRewards.containsKey(parentKey)) {
-                    BigDecimal sum = new BigDecimal(0.0d);
-                    for(double amount : yml.getDoubleList(parentKey)) {
-                        sum = sum.add(new BigDecimal(amount));
-                    }
-                    sumRewards.put(parentKey, sum);
+            // 単一報酬の場合
+            if(reward instanceof IReward) {
+                if(!rewards.containsKey(parentKey)) {
+                    List<?> list = yml.getList(parentKey, new ArrayList<>());
+                    List<Object> objList = new ArrayList<>();
+                    list.stream().forEach(objList::add);
+                    rewards.put(parentKey, objList);
                 }
-                sumRewards.put(parentKey, sumRewards.get(parentKey).add(new BigDecimal(((SumRewardBase)reward).getAmount())));
+                rewards.get(parentKey).add(((IReward)reward).serialize());
             }
         }
         for(String key : sumRewards.keySet()) {
-            List<Double> list = new ArrayList<>();
-            list.add(sumRewards.get(key).doubleValue());
+            List<Object> list = new ArrayList<>();
+            list.add(sumRewards.get(key).serialize());
             yml.set(key, list);
         }
 

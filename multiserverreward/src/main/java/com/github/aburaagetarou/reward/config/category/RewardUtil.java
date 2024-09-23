@@ -151,5 +151,5 @@ public class RewardUtil {
         rewardCfg.setRewards(rewards);
         
         return rewardCfg;
-    }    
+    }
 }

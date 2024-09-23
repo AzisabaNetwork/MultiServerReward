@@ -15,10 +15,16 @@ public interface IReward {
     String getParentKey();
 
     /**
+     * Yamlに書き込みを行うオブジェクトを返す
+     * @return オブジェクト
+     */
+    Object serialize();
+    
+    /**
      * 報酬を付与する
      * @param player 報酬を受け取るプレイヤー
      */
-    void add(Player player);
+    void get(Player player);
     
     /**
      * 報酬の実物を与える

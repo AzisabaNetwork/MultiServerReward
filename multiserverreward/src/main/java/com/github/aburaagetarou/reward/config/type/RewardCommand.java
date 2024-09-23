@@ -4,12 +4,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.github.aburaagetarou.MultiServerReward;
+import com.github.aburaagetarou.reward.config.RewardType;
 
 /**
  * コマンド実行による報酬を表すクラス
  * @author AburaAgeTarou
  */
-public class RewardCommand extends SingleRewardBase {
+public class RewardCommand implements IReward {
     
     // 報酬コマンド
     private final String command;
@@ -28,15 +29,15 @@ public class RewardCommand extends SingleRewardBase {
      */
     @Override
     public String getParentKey() {
-        return "commands";
+        return RewardType.COMMAND.getAlias();
     }
 
     /**
-     * 報酬を文字列化する
-     * @return 報酬の文字列
+     * Yamlに書き込みを行うオブジェクトを返す
+     * @return オブジェクト
      */
     @Override
-    public String serialize() {
+    public Object serialize() {
         return command;
     }
 
@@ -45,7 +46,7 @@ public class RewardCommand extends SingleRewardBase {
      * @param player 報酬を受け取るプレイヤー
      */
     @Override
-    public void add(Player player) {
+    public void get(Player player) {
         return;
     }
 
