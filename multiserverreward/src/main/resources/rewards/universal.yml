@@ -1,6 +1,7 @@
 ### 汎用報酬設定 ###
 # 外部からコマンドで呼び出される想定の報酬設定です。
-# 本プラグイン単体では /msr give <テーブル名> コマンドで配布することが可能です。
+# 本プラグイン単体では /msr give <プレイヤー> <テーブル名> コマンドで配布することが可能です。
+# また、 /msr debug give <プレイヤー> <テーブル名> コマンドを用いることで、抽選結果をその場で確認することが可能です。
 
 # 例
 example:
@@ -14,5 +15,11 @@ example:
 
   commands:
     - "crackshot:shot give <player> arrowed_book"
-    
 
+
+# 例その２
+# /msr give russian-roulette AburaAgeTarou 16.6
+russian-roulette:
+
+  commands:
+    - "kill <player>"
