@@ -10,7 +10,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import com.github.aburaagetarou.MultiServerReward;
 import com.github.aburaagetarou.config.MSRConfig;
 import com.github.aburaagetarou.reward.config.category.RewardTrigger;
-import com.github.aburaagetarou.reward.config.category.RewardUtil;
 import com.github.aburaagetarou.reward.config.type.IReward;
 
 /**
@@ -67,14 +66,14 @@ public class MatchEndReward extends MatchRewardBase {
         
         // 通常報酬の読み込み
         MatchEndReward reward = new MatchEndReward();
-        allRewards.add(RewardUtil.loadMatchReward(reward, yml, null));
+        allRewards.add(MatchRewardBase.loadMatchReward(reward, yml, null));
 
         // 期間限定報酬の読み込み
         ConfigurationSection section = yml.getConfigurationSection("limited-time");
         if(section != null) {
             for(String key : section.getKeys(false)) {
                 reward = new MatchEndReward();
-                allRewards.add(RewardUtil.loadMatchReward(reward, yml, "limited-time." + key));
+                allRewards.add(MatchRewardBase.loadMatchReward(reward, yml, "limited-time." + key));
             }
         }
     }

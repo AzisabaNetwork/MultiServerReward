@@ -131,6 +131,7 @@ public class FileRewardManager extends RewardManager {
         Map<String, BigDecimal> sumRewards = new HashMap<>();
         for(IReward reward : unsavedRewards) {
             String parentKey = reward.getParentKey();
+            if(parentKey == null) continue;
 
             // 単一報酬の場合
             if(reward instanceof SingleRewardBase) {
