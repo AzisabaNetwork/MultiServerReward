@@ -1,13 +1,16 @@
 package com.github.aburaagetarou.command;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import com.github.aburaagetarou.MultiServerReward;
 import com.github.aburaagetarou.config.ConfigManager;
 import com.github.aburaagetarou.config.MSRConfig;
 import com.github.aburaagetarou.reward.config.category.killstreak.KillStreakLevelReward;
@@ -17,6 +20,7 @@ import com.github.aburaagetarou.reward.config.category.match.MatchLoseReward;
 import com.github.aburaagetarou.reward.config.category.match.MatchWinReward;
 import com.github.aburaagetarou.reward.config.type.IReward;
 import com.github.aburaagetarou.reward.config.type.RewardCommand;
+import com.github.aburaagetarou.reward.config.universal.UniversalRewardManager;
 import com.github.aburaagetarou.reward.manage.RewardManager;
 import com.github.aburaagetarou.util.MessageUtils;
 
@@ -27,8 +31,10 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Dependency;
 import co.aikar.commands.annotation.Description;
+import co.aikar.commands.annotation.Flags;
 import co.aikar.commands.annotation.HelpCommand;
 import co.aikar.commands.annotation.Subcommand;
+import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 
 @CommandAlias("msr")
 @Description("MultiServerRewardのコマンド")
@@ -221,6 +227,65 @@ public class MSRCommand extends BaseCommand {
             RewardManager.getManager(player).addRewards(rewards);
             if(rewards.size() > 0) {
                 MessageUtils.sendColoredMessage(player, "&a報酬を受け取りました。");
+            }
+        }
+    }
+
+    @Subcommand("give")
+    @CommandPermission("msr.give")
+    @Description("指定テーブルの汎用報酬を配布します")
+    public void onGive(Player player, String key, @Flags("target") OnlinePlayer target, @Default("100") double argChance, @Default("true") boolean isOverLottery) {
+
+        // 登録されていないテーブルの場合は警告
+        if(!UniversalRewardManager.exists(key)) {
+            MultiServerReward.getInstance().getLogger().warning("コマンドで未定義の報酬テーブル[" + key + "]が指定されました。");
+            return;
+        }
+
+        // 報酬を取得
+        List<IReward> rewards = UniversalRewardManager.getReward(key).getRewards();
+
+        // 抽選
+        Random lottery = new SecureRandom();
+        double chance = (!isOverLottery ? Math.min(argChance, 100.0d) : argChance);
+        while(chance > 0.0d) {
+            double random = lottery.nextDouble() * 100.0d;
+            if(random <= chance) {
+                RewardManager.getManager(target.player).addRewards(rewards);
+            }
+            chance -= 100.0d;
+        }
+    }
+
+    @Subcommand("debug")
+    @CommandPermission("msr.debug")
+    @Description("開発者向け機能")
+    public class Debug extends BaseCommand {
+        
+        @Subcommand("give")
+        @CommandPermission("msr.debug.give")
+        @Description("指定テーブルの汎用報酬を配布します")
+        public void onGive(Player player, String key, @Flags("target") OnlinePlayer target, @Default("100") double argChance, @Default("true") boolean isOverLottery) {
+
+            // 登録されていないテーブルの場合は警告
+            if(!UniversalRewardManager.exists(key)) {
+                MessageUtils.sendColoredMessage(player, "&c未定義の報酬テーブルです。");
+                return;
+            }
+
+            // 報酬を取得
+            List<IReward> rewards = UniversalRewardManager.getReward(key).getRewards();
+
+            // 抽選
+            Random lottery = new SecureRandom();
+            double chance = (!isOverLottery ? Math.min(argChance, 100.0d) : argChance);
+            while(chance > 0.0d) {
+                double random = lottery.nextDouble() * 100.0d;
+                MessageUtils.sendColoredMessage(player, "random: " + random + " <= chance: " + chance);
+                if(random <= chance) {
+                    RewardManager.getManager(target.player).addRewards(rewards);
+                }
+                chance -= 100.0d;
             }
         }
     }

@@ -12,7 +12,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import com.github.aburaagetarou.MultiServerReward;
 import com.github.aburaagetarou.config.MSRConfig;
 import com.github.aburaagetarou.reward.config.category.RewardTrigger;
-import com.github.aburaagetarou.reward.config.category.RewardUtil;
 import com.github.aburaagetarou.reward.config.type.IReward;
 
 /**
@@ -88,14 +87,14 @@ public class AssistStreakReward extends KillStreakRewardBase {
         
         // 通常報酬の読み込み
         AssistStreakReward reward = new AssistStreakReward();
-        allRewards.add(RewardUtil.loadKillStreakReward(reward, yml, null));
+        allRewards.add(KillStreakRewardBase.loadKillStreakReward(reward, yml, null));
 
         // 期間限定報酬の読み込み
         ConfigurationSection section = yml.getConfigurationSection("limited-time-streak");
         if(section != null) {
             for(String key : section.getKeys(false)) {
                 reward = new AssistStreakReward();
-                allRewards.add(RewardUtil.loadKillStreakReward(reward, yml, "limited-time-streak." + key));
+                allRewards.add(KillStreakRewardBase.loadKillStreakReward(reward, yml, "limited-time-streak." + key));
             }
         }
     }

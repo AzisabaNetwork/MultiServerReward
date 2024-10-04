@@ -13,6 +13,7 @@ import com.github.aburaagetarou.reward.config.category.killstreak.KillStreakRewa
 import com.github.aburaagetarou.reward.config.category.match.MatchEndReward;
 import com.github.aburaagetarou.reward.config.category.match.MatchLoseReward;
 import com.github.aburaagetarou.reward.config.category.match.MatchWinReward;
+import com.github.aburaagetarou.reward.config.universal.UniversalRewardManager;
 import com.github.aburaagetarou.util.MessageUtils;
 
 /**
@@ -84,6 +85,7 @@ public class ConfigManager {
         MatchEndReward.loadAll();
         MatchWinReward.loadAll();
         MatchLoseReward.loadAll();
+        UniversalRewardManager.loadAll();
 
         MessageUtils.broadcastColoredMessage("&a&l設定の再読み込みが完了しました。");
         MessageUtils.broadcastColoredMessage("&a&lご協力ありがとうございました。");
