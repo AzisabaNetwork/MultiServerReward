@@ -1,5 +1,6 @@
 package com.github.aburaagetarou;
 
+import co.aikar.commands.BaseCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,6 +16,9 @@ import co.aikar.commands.MessageKeys;
 import co.aikar.commands.MessageType;
 import co.aikar.commands.PaperCommandManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * MultiServerReward メインクラス
  * @author AburaAgeTarou
@@ -27,6 +31,8 @@ public class MultiServerReward extends JavaPlugin
     // コマンドAPI
     static PaperCommandManager manager;
 
+    // コマンドリスト
+    private static final List<BaseCommand> commands = new ArrayList<>();
     /**
      * プラグインが有効化されたときの処理
      */
@@ -64,7 +70,7 @@ public class MultiServerReward extends JavaPlugin
         manager.registerCommand(new MSRCommand().setExceptionHandler((command, registeredCommand, sender, args, t) -> {
             sender.sendMessage(MessageType.ERROR, MessageKeys.ERROR_GENERIC_LOGGED);
             return true;
-        }));
+        }), true);
 
         // 連携先サーバーの場合、報酬データの自動保存を開始
         if(!MSRConfig.isOriginal()) {
@@ -95,6 +101,10 @@ public class MultiServerReward extends JavaPlugin
             });
         }
 
+        // コマンド登録の解除
+        commands.forEach(manager::unregisterCommand);
+        manager.unregisterCommands();
+
         getLogger().info("MultiServerRewardの終了処理が完了しました。");
     }
 
@@ -110,5 +120,12 @@ public class MultiServerReward extends JavaPlugin
      */
     public static PaperCommandManager getCommandManager() {
         return manager;
+    }
+
+    /**
+     * コマンドを登録する
+     */
+    public static void addCommand(BaseCommand command) {
+        commands.add(command);
     }
 }
