@@ -39,7 +39,14 @@ import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 @CommandAlias("msr")
 @Description("MultiServerRewardのコマンド")
 public class MSRCommand extends BaseCommand {
-    
+
+    /**
+     * コンストラクタ
+     */
+    public MSRCommand() {
+        MultiServerReward.addCommand(this);
+    }
+
     @Dependency
     private Plugin plugin;
 
