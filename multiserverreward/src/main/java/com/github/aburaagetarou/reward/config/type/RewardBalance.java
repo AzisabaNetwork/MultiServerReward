@@ -1,7 +1,9 @@
 package com.github.aburaagetarou.reward.config.type;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
+import com.github.aburaagetarou.statistics.IStatisticsTarget;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -12,7 +14,7 @@ import com.github.aburaagetarou.config.MSRConfig;
  * ＄報酬を表すクラス
  * @author AburaAgeTarou
  */
-public class RewardBalance extends SumRewardBase {
+public class RewardBalance extends SumRewardBase implements IStatisticsTarget {
     
     // 報酬コマンド
     private final int balance;
@@ -23,7 +25,7 @@ public class RewardBalance extends SumRewardBase {
      */
     public RewardBalance(Double balance) {
         BigDecimal bd = new BigDecimal(balance);
-        bd = bd.setScale(0, BigDecimal.ROUND_HALF_UP);
+        bd = bd.setScale(0, RoundingMode.HALF_UP);
         this.balance = bd.intValue();
     }
 
@@ -42,7 +44,7 @@ public class RewardBalance extends SumRewardBase {
      */
     @Override
     public double getAmount() {
-        return (double)balance;
+        return balance;
     }
 
     /**
@@ -68,7 +70,33 @@ public class RewardBalance extends SumRewardBase {
             command = command.replace("<amount>", String.valueOf(balance));
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
         });
-        return;
+    }
+
+    /**
+     * 報酬名を得る
+     * @return 報酬名
+     */
+    @Override
+    public String getStatCategory() {
+        return "Balance";
+    }
+
+    /**
+     * 報酬名を得る
+     * @return 報酬名
+     */
+    @Override
+    public String getStatData() {
+        return "$";
+    }
+
+    /**
+     * 報酬数量を得る
+     * @return 報酬名
+     */
+    @Override
+    public double getStatAmount() {
+        return balance;
     }
 
     /**

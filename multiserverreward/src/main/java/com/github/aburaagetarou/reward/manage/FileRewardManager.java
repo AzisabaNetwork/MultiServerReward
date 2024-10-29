@@ -19,6 +19,8 @@ import com.github.aburaagetarou.reward.config.RewardType;
 import com.github.aburaagetarou.reward.config.type.IReward;
 import com.github.aburaagetarou.reward.config.type.SingleRewardBase;
 import com.github.aburaagetarou.reward.config.type.SumRewardBase;
+import com.github.aburaagetarou.statistics.IStatisticsTarget;
+import com.github.aburaagetarou.statistics.StatisticsUtil;
 
 /**
  * ファイルによる報酬管理クラス
@@ -144,13 +146,18 @@ public class FileRewardManager extends RewardManager {
             // 合計報酬の場合
             if(reward instanceof SumRewardBase) {
                 if(!sumRewards.containsKey(parentKey)) {
-                    BigDecimal sum = new BigDecimal(0.0d);
+                    BigDecimal sum = new BigDecimal("0.0");
                     for(double amount : yml.getDoubleList(parentKey)) {
                         sum = sum.add(new BigDecimal(amount));
                     }
                     sumRewards.put(parentKey, sum);
                 }
                 sumRewards.put(parentKey, sumRewards.get(parentKey).add(new BigDecimal(((SumRewardBase)reward).getAmount())));
+            }
+
+            // 統計対象の場合
+            if(reward instanceof IStatisticsTarget) {
+                StatisticsUtil.writeData(MultiServerReward.getStatisticsWriter(), (IStatisticsTarget)reward, player);
             }
         }
         for(String key : sumRewards.keySet()) {

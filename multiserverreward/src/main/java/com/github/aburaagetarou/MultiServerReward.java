@@ -1,6 +1,9 @@
 package com.github.aburaagetarou;
 
 import co.aikar.commands.BaseCommand;
+import com.github.aburaagetarou.statistics.FileStatisticsWriter;
+import com.github.aburaagetarou.statistics.IStatisticsWriter;
+import com.github.aburaagetarou.statistics.StatisticsUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,7 +19,10 @@ import co.aikar.commands.MessageKeys;
 import co.aikar.commands.MessageType;
 import co.aikar.commands.PaperCommandManager;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,13 +32,17 @@ import java.util.List;
 public class MultiServerReward extends JavaPlugin
 {
     // プラグインインスタンス
-    static MultiServerReward instance;
+    private static MultiServerReward instance;
 
     // コマンドAPI
-    static PaperCommandManager manager;
+    private static PaperCommandManager manager;
 
     // コマンドリスト
     private static final List<BaseCommand> commands = new ArrayList<>();
+
+    // 統計情報の保存クラス
+    private static IStatisticsWriter statisticsWriter;
+
     /**
      * プラグインが有効化されたときの処理
      */
@@ -77,6 +87,11 @@ public class MultiServerReward extends JavaPlugin
             FileRewardManager.startAutoSave();
         }
 
+        // 統計情報の保存クラスを初期化
+        String syncDataDir = MSRConfig.getSyncDataDir();
+        String statFileName = new SimpleDateFormat("yyyy_MM_dd").format(new Date());
+        statisticsWriter = new FileStatisticsWriter(new File(syncDataDir, "logs/" + statFileName + ".csv"));
+
         // Bungeecord連携
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 
@@ -105,6 +120,12 @@ public class MultiServerReward extends JavaPlugin
         commands.forEach(manager::unregisterCommand);
         manager.unregisterCommands();
 
+        // 統計データの書き込み
+        String syncDataDir = MSRConfig.getSyncDataDir();
+        String statFileName = new SimpleDateFormat("yyyy_MM_dd").format(new Date());
+        IStatisticsWriter writer = new FileStatisticsWriter(new File(syncDataDir, "logs/" + statFileName + "_stat.csv"));
+        StatisticsUtil.writeStatistics(writer);
+
         getLogger().info("MultiServerRewardの終了処理が完了しました。");
     }
 
@@ -127,5 +148,13 @@ public class MultiServerReward extends JavaPlugin
      */
     public static void addCommand(BaseCommand command) {
         commands.add(command);
+    }
+
+    /**
+     * 統計情報の保存クラスを取得する
+     * @return 統計情報の保存クラス
+     */
+    public static IStatisticsWriter getStatisticsWriter() {
+        return statisticsWriter;
     }
 }

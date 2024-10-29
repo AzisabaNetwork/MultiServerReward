@@ -1,5 +1,6 @@
 package com.github.aburaagetarou.reward.config.type;
 
+import com.github.aburaagetarou.statistics.IStatisticsTarget;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -9,7 +10,7 @@ import com.github.aburaagetarou.MultiServerReward;
  * コマンド実行による報酬を表すクラス
  * @author AburaAgeTarou
  */
-public class RewardCommand extends SingleRewardBase {
+public class RewardCommand extends SingleRewardBase implements IStatisticsTarget {
     
     // 報酬コマンド
     private final String command;
@@ -60,8 +61,33 @@ public class RewardCommand extends SingleRewardBase {
         Bukkit.getScheduler().runTask(MultiServerReward.getInstance(), () -> {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("<player>", player.getName()));
         });
+    }
 
-        return;
+    /**
+     * 報酬名を得る
+     * @return 報酬名
+     */
+    @Override
+    public String getStatCategory() {
+        return "Command";
+    }
+
+    /**
+     * 報酬名を得る
+     * @return 報酬名
+     */
+    @Override
+    public String getStatData() {
+        return command;
+    }
+
+    /**
+     * 報酬数量を得る
+     * @return 報酬名
+     */
+    @Override
+    public double getStatAmount() {
+        return 1.0d;
     }
 
     /**
