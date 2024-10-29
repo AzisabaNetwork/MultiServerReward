@@ -73,7 +73,6 @@ public class RewardMessage extends SingleRewardBase {
      */
     @Override
     public String toString() {
-        String result = "&7[全体メッセージ] &r" + message;
-        return result;
+        return "&7[全体メッセージ] &r" + message;
     }
 }

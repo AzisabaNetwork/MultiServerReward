@@ -2,6 +2,8 @@ package com.github.aburaagetarou.reward.config.type;
 
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
+
 /**
  * 報酬を表すインターフェース
  * @author AburaAgeTarou
