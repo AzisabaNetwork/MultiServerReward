@@ -6,6 +6,7 @@ import org.bukkit.OfflinePlayer;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -42,8 +43,9 @@ public class StatisticsUtil {
 	 * @param player プレイヤー
 	 */
 	public static void writeData(IStatisticsWriter writer, IStatisticsTarget reward, OfflinePlayer player) {
+		String date = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss]").format(new Date());
 		Bukkit.getScheduler().runTaskLaterAsynchronously(MultiServerReward.getInstance(), () -> {
-			writer.write(toCSV(player.getName(), reward.getStatCategory(), reward.getStatData(), BigDecimal.valueOf(reward.getStatAmount()).setScale(2, RoundingMode.CEILING).toPlainString()));
+			writer.write(toCSV(date, player.getName(), reward.getStatCategory(), reward.getStatData(), BigDecimal.valueOf(reward.getStatAmount()).setScale(2, RoundingMode.CEILING).toPlainString()));
 		}, 1L);
 
 		// 統計データの更新
