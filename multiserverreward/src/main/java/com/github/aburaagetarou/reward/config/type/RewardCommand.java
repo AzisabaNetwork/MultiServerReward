@@ -58,9 +58,14 @@ public class RewardCommand extends SingleRewardBase implements IStatisticsTarget
     public void give(Player player) {
 
         // メインスレッドでコマンド実行
-        Bukkit.getScheduler().runTask(MultiServerReward.getInstance(), () -> {
+        if(!Bukkit.isPrimaryThread()) {
+            Bukkit.getScheduler().runTask(MultiServerReward.getInstance(), () -> {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("<player>", player.getName()));
+            });
+        }
+        else {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("<player>", player.getName()));
-        });
+        }
     }
 
     /**

@@ -37,10 +37,7 @@ public class PlayerListener implements Listener {
             
             // 一拍置いて報酬を受け取る
             Bukkit.getScheduler().runTaskLaterAsynchronously(MultiServerReward.getInstance(), () -> {
-                if(!RewardManager.getManager(event.getPlayer()).give()) {
-                    MessageUtils.sendColoredMessage(event.getPlayer(), "&c受け取れていない報酬があります。");
-                    MessageUtils.sendColoredMessage(event.getPlayer(), "&cインベントリを整理し、&l/msr reward&cで受け取ってください。");
-                }
+                RewardManager.getManager(event.getPlayer()).give();
             }, 60L);
         }
         // 連携先サーバーの場合
