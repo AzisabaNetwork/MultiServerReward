@@ -1,11 +1,10 @@
 package com.github.aburaagetarou.reward.manage;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.github.aburaagetarou.MultiServerReward;
+import com.github.aburaagetarou.util.MessageUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.github.aburaagetarou.reward.config.type.IReward;
@@ -77,56 +76,59 @@ public abstract class RewardManager {
     /**
      * 報酬を渡す
      */
-    public boolean give() {
+    public void give() {
 
-        boolean result = true;
-        
         // 報酬情報を取得
         List<IReward> rewards = load();
 
         // 報酬情報がない場合は処理しない
         if(rewards.isEmpty()) {
-            return true;
+            return;
         }
 
-        // 未受取の報酬情報
-        IReward[] unsaved = rewards.toArray(new IReward[0]);
+        // 同期実行
+        Bukkit.getScheduler().runTask(MultiServerReward.getInstance(), () -> {
 
-        // 報酬を付与
-        for(int i = 0; i < unsaved.length; i++) {
-            IReward reward = unsaved[i];
+            // 未受取の報酬情報
+            IReward[] unsaved = rewards.toArray(new IReward[0]);
 
-            // アイテムを受け取るスロットがない場合は中断
-            if(player.getInventory().firstEmpty() == -1) {
-                result = false;
-                break;
+            // 報酬を付与
+            for(int i = 0; i < unsaved.length; i++) {
+                IReward reward = unsaved[i];
+
+                // アイテムを受け取るスロットがない場合は中断
+                if(player.getInventory().firstEmpty() == -1) {
+                    MessageUtils.sendColoredMessage(player, "&c受け取れていない報酬があります。");
+                    MessageUtils.sendColoredMessage(player, "&cインベントリを整理し、&l/msr reward&cで受け取ってください。");
+                    break;
+                }
+
+                reward.give(player);
+                unsaved[i] = null;
             }
-            
-            reward.give(player);
-            unsaved[i] = null;
-        }
 
-        // 未受取の報酬情報を再設定
-        for(IReward reward : unsaved) {
-            if(reward != null) {
-                unsavedRewards.add(reward);
-            }
-        }
+            Bukkit.getScheduler().runTaskAsynchronously(MultiServerReward.getInstance(), () -> {
+                // 未受取の報酬情報を再設定
+                for(IReward reward : unsaved) {
+                    if(reward != null) {
+                        unsavedRewards.add(reward);
+                    }
+                }
 
-        // 未保存の報酬情報を保存
-        if(!unsavedRewards.isEmpty()) {
-            save(false);
-        }
-        else {
-            delete();
-        }
-
-        return result;
+                // 未保存の報酬情報を保存
+                if(!unsavedRewards.isEmpty()) {
+                    save(false);
+                }
+                else {
+                    delete();
+                }
+            });
+        });
     }
 
     /**
      * 報酬を追加する
-     * @param reward 報酬
+     * @param rewards 報酬
      */
     public void addRewards(Collection<? extends IReward> rewards) {
         rewards.forEach(reward -> reward.add(player));
