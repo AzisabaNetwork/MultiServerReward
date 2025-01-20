@@ -34,8 +34,8 @@ public abstract class MatchRewardBase {
         rewardCfg.setRewards(rewards);
 
         // 配布期間の取得
-        String startPath = (node == null ? rewardCfg.getKey() + ".start" : node + "." + rewardCfg.getKey() + ".start");
-        String endPath = (node == null ? rewardCfg.getKey() + ".end" : node + "." + rewardCfg.getKey() + ".end");
+        String startPath = (node == null ? rewardCfg.getKey() + ".start" : node + ".start");
+        String endPath = (node == null ? rewardCfg.getKey() + ".end" : node + ".end");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
             if(yml.contains(startPath)) rewardCfg.setStart(sdf.parse(yml.getString(startPath)));
