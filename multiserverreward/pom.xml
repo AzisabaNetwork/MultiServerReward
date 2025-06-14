@@ -69,6 +69,10 @@
             <id>aikar</id>
             <url>https://repo.aikar.co/content/groups/aikar/</url>
         </repository>
+        <repository>
+            <id>net.azisaba</id>
+            <url>https://repo.azisaba.net/repository/maven-public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -92,7 +96,7 @@
         <dependency>
             <groupId>net.azisaba</groupId>
             <artifactId>LeonGunWar</artifactId>
-            <version>dev</version>
+            <version>3.3.2</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

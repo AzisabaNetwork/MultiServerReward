@@ -43,8 +43,13 @@ public class RewardListener implements Listener {
         RewardManager manager = RewardManager.getManager(player);
         manager.addRewards(rewards);
 
+        //報酬弐倍システム
+        if(LeonGunWar.doubleRewardEnable){
+            manager.addRewards(rewards);
+        }
+
         // リーダー報酬
-        if(LeonGunWar.getPlugin().getManager().isLeaderMatch()) {
+        if(LeonGunWar.getPlugin().getManager().isLeaderMatch() && !LeonGunWar.doubleRewardEnable) {
             Map<BattleTeam, Player> leaders = LeonGunWar.getPlugin().getManager().getLDMLeaderMap();
             if(leaders.values().contains(player)) {
                 manager.addRewards(rewards);
