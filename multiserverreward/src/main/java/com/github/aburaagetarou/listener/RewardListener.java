@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import net.azisaba.lgw.core.util.MatchMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,6 +24,7 @@ import net.azisaba.lgw.core.events.MatchFinishedEvent;
 import net.azisaba.lgw.core.events.PlayerAssistEvent;
 import net.azisaba.lgw.core.events.PlayerKillEvent;
 import net.azisaba.lgw.core.util.BattleTeam;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
 /**
  * 報酬受け取り用のリスナークラス
@@ -35,13 +37,12 @@ public class RewardListener implements Listener {
 
     /**
      * 報酬の付与
-     * リーダーの場合は2倍与える
+     * リーダーの場合は3倍与える
      * @param player プレイヤー
      * @param rewards 報酬リスト
      */
     public static void addRewards(Player player, List<IReward> rewards) {
         RewardManager manager = RewardManager.getManager(player);
-        manager.addRewards(rewards);
 
         //報酬弐倍システム
         if(LeonGunWar.doubleRewardEnable){
@@ -53,8 +54,10 @@ public class RewardListener implements Listener {
             Map<BattleTeam, Player> leaders = LeonGunWar.getPlugin().getManager().getLDMLeaderMap();
             if(leaders.values().contains(player)) {
                 manager.addRewards(rewards);
+                manager.addRewards(rewards);
             }
         }
+
     }
 
     /**
@@ -72,16 +75,51 @@ public class RewardListener implements Listener {
 
         // 固定キルストリーク報酬
         List<IReward> rewards = KillStreakReward.getAvailableRewards("" + streak);
-        if(rewards.size() > 0) {
+        if(!rewards.isEmpty()) {
             addRewards(event.getPlayer(), rewards);
         }
 
         // 倍数キルストリーク報酬
         rewards = KillStreakLevelReward.getAvailableRewards(streak);
-        if(rewards.size() > 0) {
+        if(!rewards.isEmpty()) {
             addRewards(event.getPlayer(), rewards);
         }
+
+
     }
+
+    @EventHandler
+    public void onDeath(PlayerDeathEvent event) {
+        Player deader = event.getEntity();
+        Player killer = deader.getKiller();
+
+        // 自滅・PvEは無視
+        if (killer == null || killer == deader) {
+            return;
+        }
+
+        // 試合中プレイヤーのみ対象
+        if (!LeonGunWar.getPlugin().getManager().isPlayerMatching(killer)) {
+            return;
+        }
+
+        // カスタムマッチは対象外
+        if (LeonGunWar.getPlugin().getManager().getMatchMode() == MatchMode.CUSTOM_DEATH_MATCH) {
+            return;
+        }
+
+        // 🔥 リーダーを倒した場合、特別報酬（LEADERキー）を追加付与
+        if (LeonGunWar.getPlugin().getManager().isLeaderMatch()) {
+            Map<BattleTeam, Player> leaders = LeonGunWar.getPlugin().getManager().getLDMLeaderMap();
+            if (leaders.containsValue(deader)) {
+                List<IReward> leaderRewards = KillStreakReward.getAvailableRewards("LEADER");
+                if (!leaderRewards.isEmpty()) {
+                    addRewards(killer, leaderRewards);
+                }
+            }
+        }
+    }
+
 
     /**
      * アシストストリーク報酬
