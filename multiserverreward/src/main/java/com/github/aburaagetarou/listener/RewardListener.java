@@ -84,8 +84,6 @@ public class RewardListener implements Listener {
         if(!rewards.isEmpty()) {
             addRewards(event.getPlayer(), rewards);
         }
-
-
     }
 
     @EventHandler
@@ -112,9 +110,16 @@ public class RewardListener implements Listener {
         if (LeonGunWar.getPlugin().getManager().isLeaderMatch()) {
             Map<BattleTeam, Player> leaders = LeonGunWar.getPlugin().getManager().getLDMLeaderMap();
             if (leaders.containsValue(deader)) {
-                List<IReward> leaderRewards = KillStreakReward.getAvailableRewards("LEADER");
-                if (!leaderRewards.isEmpty()) {
-                    addRewards(killer, leaderRewards);
+                // 固定キルストリーク報酬
+                List<IReward> rewards = KillStreakReward.getAvailableRewards("LEADER");
+                if(!rewards.isEmpty()) {
+                    addRewards(killer, rewards);
+                }
+
+                // 倍数キルストリーク報酬
+                rewards = KillStreakLevelReward.getAvailableRewards("LEADER");
+                if(!rewards.isEmpty()) {
+                    addRewards(killer, rewards);
                 }
             }
         }

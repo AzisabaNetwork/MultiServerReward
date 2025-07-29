@@ -1,9 +1,6 @@
 package com.github.aburaagetarou.reward.config;
 
-import com.github.aburaagetarou.reward.config.type.IReward;
-import com.github.aburaagetarou.reward.config.type.RewardBalance;
-import com.github.aburaagetarou.reward.config.type.RewardCommand;
-import com.github.aburaagetarou.reward.config.type.RewardMessage;
+import com.github.aburaagetarou.reward.config.type.*;
 
 /**
  * 報酬の種類を表す列挙型

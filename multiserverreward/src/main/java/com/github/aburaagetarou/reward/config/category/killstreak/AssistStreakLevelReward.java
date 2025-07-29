@@ -25,7 +25,7 @@ public class AssistStreakLevelReward extends KillStreakRewardBase {
 
     /**
      * キーから報酬を取得する
-     * @param key ストリーク数
+     * @param streak ストリーク数
      * @return 報酬リスト
      */
     public static List<IReward> getAvailableRewards(int streak) {

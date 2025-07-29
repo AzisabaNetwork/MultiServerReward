@@ -25,7 +25,7 @@ public class KillStreakLevelReward extends KillStreakRewardBase {
 
     /**
      * キーから報酬を取得する
-     * @param key ストリーク数
+     * @param streak ストリーク数
      * @return 報酬リスト
      */
     public static List<IReward> getAvailableRewards(int streak) {
@@ -44,6 +44,22 @@ public class KillStreakLevelReward extends KillStreakRewardBase {
                     List<IReward> rewardList = reward.getReward(key);
                     if(rewardList != null) list.addAll(rewardList);
                 }
+            }
+        }
+        return list;
+    }
+
+    /**
+     * キーから報酬を取得する
+     * @param key level名(1,5,15のような)
+     * @return 報酬リスト
+     */
+    public static List<IReward> getAvailableRewards(String key) {
+        List<IReward> list = new ArrayList<>();
+        for (KillStreakRewardBase reward : allRewards) {
+            List<IReward> rewardList = reward.getReward(key);
+            if (rewardList != null) {
+                list.addAll(rewardList);
             }
         }
         return list;
