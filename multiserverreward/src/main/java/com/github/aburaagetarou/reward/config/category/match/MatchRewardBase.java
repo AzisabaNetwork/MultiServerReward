@@ -84,6 +84,53 @@ public abstract class MatchRewardBase {
     }
 
     /**
+     * 指定パス配下の指定トリガーキーの報酬リストを読み込む（rewardCfg の期間設定などには触れない）。
+     * <p>
+     * 例) basePath="rules.tdm" triggerKey="match-end" なら "rules.tdm.match-end" を読む。
+     * basePath が null/空 ならルート直下の triggerKey を読む。
+     */
+    protected static List<IReward> loadRewardsAt(YamlConfiguration yml, @Nullable String basePath, String triggerKey) {
+        List<IReward> rewards = new ArrayList<>();
+
+        String path;
+        if(basePath == null || basePath.isEmpty()) path = triggerKey;
+        else path = basePath + "." + triggerKey;
+
+        ConfigurationSection section = yml.getConfigurationSection(path);
+        if(section == null) return rewards;
+
+        for(String key : section.getKeys(false)) {
+            RewardType type = RewardType.fromAlias(key);
+            if(type == null) continue;
+
+            String rewardPath = path + "." + key;
+            try {
+                Constructor<? extends IReward> constructor = type.getRewardClass().getConstructor(type.getRewardType());
+                List<?> list = yml.getList(rewardPath);
+                if(list == null) continue;
+                for(Object data : list) {
+                    IReward reward = constructor.newInstance(data);
+                    rewards.add(reward);
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return rewards;
+    }
+
+    /**
+     * 指定ノード(node)からゲームルール別報酬を読み込む。
+     * rules.<ruleName>.<triggerKey> を読み、見つからなければ空リスト。
+     */
+    protected static List<IReward> loadRuleRewards(YamlConfiguration yml, @Nullable String node, @Nullable String ruleName, String triggerKey) {
+        if(ruleName == null || ruleName.trim().isEmpty()) return new ArrayList<>();
+        String basePath = (node == null ? "rules." + ruleName : node + ".rules." + ruleName);
+        return loadRewardsAt(yml, basePath, triggerKey);
+    }
+
+    /**
      * 報酬設定のキーを取得する
      * @return キー文字列
      */

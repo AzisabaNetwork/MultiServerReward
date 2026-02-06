@@ -18,3 +18,33 @@ match-win:
 match-lose:
   commands: []
 
+# ==============================
+# ゲームルール別の追加報酬 (任意)
+# ==============================
+# 試合のゲームルール名ごとに、上の通常報酬に「追加で」付与する報酬を設定できます。
+# 設定場所: rules.<ルール名>.<match-end|match-win|match-lose>
+# 例: rules.tdm.match-win.commands: ...
+# team_death_match, team_death_match_nolimit, leader_death_match, leader_death_match_point, custom_death_match, hijack
+
+rules:
+  team_death_match_point:
+    match-end:
+      commands:
+        - "minecraft:give <player> minecraft:gold_ingot 1"
+    match-win:
+      commands:
+        - "minecraft:give <player> minecraft:diamond 1"
+    match-lose:
+      commands:
+        - "minecraft:give <player> minecraft:iron_ingot 1"
+
+# 期間限定にも同様に設定できます。
+# limited-time:
+#   example:
+#     start: "2026-02-01 00:00:00"
+#     end:   "2026-02-29 23:59:59"
+#     rules:
+#       tdm:
+#         match-win:
+#           commands:
+#             - "minecraft:give <player> minecraft:nether_star 1"

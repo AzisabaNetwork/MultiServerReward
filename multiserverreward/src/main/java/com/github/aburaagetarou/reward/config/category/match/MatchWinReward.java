@@ -22,14 +22,46 @@ public class MatchWinReward extends MatchRewardBase {
     protected static List<MatchRewardBase> allRewards = new ArrayList<>();
 
     /**
-     * 有効な報酬を取得する
+     * 有効な報酬を取得する（ゲームルール指定あり）
+     * @param ruleName ゲームルール名（例: "tdm"）。null/空なら通常設定のみ。
      * @return 報酬リスト
      */
-    public static List<IReward> getAvailableRewards() {
+    public static List<IReward> getAvailableRewards(String ruleName) {
         List<IReward> list = new ArrayList<>();
         for(MatchRewardBase reward : allRewards) {
             list.addAll(reward.getRewards());
         }
+        list.addAll(ruleRewards(ruleName));
+        return list;
+    }
+
+    /**
+     * 有効な報酬を取得する
+     * @return 報酬リスト
+     */
+    public static List<IReward> getAvailableRewards() {
+        return getAvailableRewards(null);
+    }
+
+    private static YamlConfiguration loadedYml;
+
+    private static List<IReward> ruleRewards(String ruleName) {
+        List<IReward> list = new ArrayList<>();
+        if(loadedYml == null) return list;
+
+        list.addAll(MatchRewardBase.loadRuleRewards(loadedYml, null, ruleName, RewardTrigger.MATCH_WIN.getAlias()));
+
+        ConfigurationSection section = loadedYml.getConfigurationSection("limited-time");
+        if(section != null) {
+            for(String key : section.getKeys(false)) {
+                MatchWinReward dummy = new MatchWinReward();
+                MatchRewardBase.loadMatchReward(dummy, loadedYml, "limited-time." + key);
+                if(!dummy.isAvailable()) continue;
+
+                list.addAll(MatchRewardBase.loadRuleRewards(loadedYml, "limited-time." + key, ruleName, RewardTrigger.MATCH_WIN.getAlias()));
+            }
+        }
+
         return list;
     }
 
@@ -63,7 +95,9 @@ public class MatchWinReward extends MatchRewardBase {
             e.printStackTrace();
             return;
         }
-        
+
+        loadedYml = yml;
+
         // 通常報酬の読み込み
         MatchWinReward reward = new MatchWinReward();
         allRewards.add(MatchRewardBase.loadMatchReward(reward, yml, null));

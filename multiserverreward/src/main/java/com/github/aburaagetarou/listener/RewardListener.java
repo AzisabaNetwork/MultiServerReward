@@ -114,12 +114,12 @@ public class RewardListener implements Listener {
      */
     @EventHandler
     public void onMatchEnd(MatchFinishedEvent event) {
+        String ruleName = LeonGunWar.getPlugin().getManager().getMatchMode().toString().toLowerCase();
 
-        // 各試合報酬を得る
-        List<IReward> matchEndRews  = MatchEndReward .getAvailableRewards();  // 試合終了報酬
-        List<IReward> matchWinRews  = MatchWinReward .getAvailableRewards();  // 試合勝利報酬
-        List<IReward> matchLoseRews = MatchLoseReward.getAvailableRewards();  // 試合敗北報酬
-        
+        List<IReward> matchEndRews  = MatchEndReward .getAvailableRewards(ruleName);  // 試合終了報酬
+        List<IReward> matchWinRews  = MatchWinReward .getAvailableRewards(ruleName);  // 試合勝利報酬
+        List<IReward> matchLoseRews = MatchLoseReward.getAvailableRewards(ruleName);  // 試合敗北報酬
+
         // 試合終了報酬(全員)
         for(Player player : event.getAllTeamPlayers()) {
             RewardManager manager = RewardManager.getManager(player);

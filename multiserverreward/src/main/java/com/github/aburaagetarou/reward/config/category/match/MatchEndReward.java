@@ -22,14 +22,54 @@ public class MatchEndReward extends MatchRewardBase {
     protected static List<MatchRewardBase> allRewards = new ArrayList<>();
 
     /**
-     * 有効な報酬を取得する
+     * 有効な報酬を取得する（ゲームルール指定あり）
+     * @param ruleName ゲームルール名（例: "tdm"）。null/空なら通常設定のみ。
      * @return 報酬リスト
      */
-    public static List<IReward> getAvailableRewards() {
+    public static List<IReward> getAvailableRewards(String ruleName) {
         List<IReward> list = new ArrayList<>();
         for(MatchRewardBase reward : allRewards) {
             list.addAll(reward.getRewards());
         }
+
+        // ルール別報酬（期間限定も含む）
+        list.addAll(ruleRewards(ruleName));
+        return list;
+    }
+
+    /**
+     * 有効な報酬を取得する
+     * @return 報酬リスト
+     */
+    public static List<IReward> getAvailableRewards() {
+        return getAvailableRewards(null);
+    }
+
+    // 読み込み済みYML（ルール別の参照用）
+    private static YamlConfiguration loadedYml;
+
+    private static List<IReward> ruleRewards(String ruleName) {
+        List<IReward> list = new ArrayList<>();
+        if(loadedYml == null) return list;
+
+        // 通常
+        list.addAll(MatchRewardBase.loadRuleRewards(loadedYml, null, ruleName, RewardTrigger.MATCH_END.getAlias()));
+
+        // 期間限定
+        ConfigurationSection section = loadedYml.getConfigurationSection("limited-time");
+        if(section != null) {
+            for(String key : section.getKeys(false)) {
+                // 期間判定は loadMatchReward と同じ node.start/end を使いたいので、
+                // 既存 allRewards に入ってる各要素の available をそのまま使う。
+                // ここでは期間判定を行うために、同じ node の設定でダミーを作って isAvailable を確認する。
+                MatchEndReward dummy = new MatchEndReward();
+                MatchRewardBase.loadMatchReward(dummy, loadedYml, "limited-time." + key);
+                if(!dummy.isAvailable()) continue;
+
+                list.addAll(MatchRewardBase.loadRuleRewards(loadedYml, "limited-time." + key, ruleName, RewardTrigger.MATCH_END.getAlias()));
+            }
+        }
+
         return list;
     }
 
@@ -63,7 +103,10 @@ public class MatchEndReward extends MatchRewardBase {
             e.printStackTrace();
             return;
         }
-        
+
+        // ルール別参照用に保持
+        loadedYml = yml;
+
         // 通常報酬の読み込み
         MatchEndReward reward = new MatchEndReward();
         allRewards.add(MatchRewardBase.loadMatchReward(reward, yml, null));
