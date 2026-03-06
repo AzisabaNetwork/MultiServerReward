@@ -2,6 +2,7 @@ package com.github.aburaagetarou.config;
 
 import java.io.File;
 
+import com.github.aburaagetarou.reward.config.category.match.TeamPointReward;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -85,6 +86,7 @@ public class ConfigManager {
         MatchEndReward.loadAll();
         MatchWinReward.loadAll();
         MatchLoseReward.loadAll();
+        TeamPointReward.loadAll();
         UniversalRewardManager.loadAll();
 
         MessageUtils.broadcastColoredMessage("&a&l設定の再読み込みが完了しました。");

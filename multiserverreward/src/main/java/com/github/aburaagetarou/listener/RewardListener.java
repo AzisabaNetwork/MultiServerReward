@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.github.aburaagetarou.reward.config.category.match.TeamPointReward;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,6 +23,7 @@ import net.azisaba.lgw.core.LeonGunWar;
 import net.azisaba.lgw.core.events.MatchFinishedEvent;
 import net.azisaba.lgw.core.events.PlayerAssistEvent;
 import net.azisaba.lgw.core.events.PlayerKillEvent;
+import net.azisaba.lgw.core.events.TeamPointIncreasedEvent;
 import net.azisaba.lgw.core.util.BattleTeam;
 
 /**
@@ -106,6 +108,22 @@ public class RewardListener implements Listener {
         rewards = AssistStreakLevelReward.getAvailableRewards(streak.get());
         if(rewards.size() > 0) {
             addRewards(event.getPlayer(), rewards);
+        }
+    }
+
+    /**
+     * チームポイント増加時報酬
+     */
+    @EventHandler
+    public void onTeamPointIncreased(TeamPointIncreasedEvent event) {
+        String ruleName = LeonGunWar.getPlugin().getManager().getMatchMode().toString().toLowerCase();
+
+        List<IReward> teamPointRews = TeamPointReward.getAvailableRewards(ruleName);  // 試合終了報酬
+
+        // チーム内全員
+        for(Player player : LeonGunWar.getPlugin().getManager().getTeamPlayers(event.getTeam())) {
+            RewardManager manager = RewardManager.getManager(player);
+            manager.addRewards(teamPointRews);
         }
     }
 

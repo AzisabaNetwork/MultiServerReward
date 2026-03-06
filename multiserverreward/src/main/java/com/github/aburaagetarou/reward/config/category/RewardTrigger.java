@@ -12,7 +12,8 @@ public enum RewardTrigger {
     ASSIST_STREAK_LEVEL("assist-streak-level"), // 倍数アシストストリーク
     MATCH_END("match-end"),                     // 試合参加
     MATCH_WIN("match-win"),                     // 試合勝利
-    MATCH_LOSE("match-lose");                   // 試合敗北
+    MATCH_LOSE("match-lose"),                   // 試合敗北
+    TEAM_POINT("team-point");                   // チームポイント加算
 
     // コンフィグでのエイリアス
     private String alias;

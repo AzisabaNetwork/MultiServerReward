@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import com.github.aburaagetarou.reward.config.category.match.TeamPointReward;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -231,6 +232,16 @@ public class MSRCommand extends BaseCommand {
         @Description("試合敗北報酬のテスト配布を行います")
         public void onMatchLose(Player player) {
             List<IReward> rewards = MatchLoseReward.getAvailableRewards();
+            RewardManager.getManager(player).addRewards(rewards);
+            if(rewards.size() > 0) {
+                MessageUtils.sendColoredMessage(player, "&a報酬を受け取りました。");
+            }
+        }
+
+        @Subcommand("point")
+        @Description("ポイント取得報酬のテスト配布を行います")
+        public void onPoint(Player player) {
+            List<IReward> rewards = TeamPointReward.getAvailableRewards();
             RewardManager.getManager(player).addRewards(rewards);
             if(rewards.size() > 0) {
                 MessageUtils.sendColoredMessage(player, "&a報酬を受け取りました。");
